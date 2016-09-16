@@ -8,10 +8,22 @@
 module.exports = {
 
   attributes: {
-    value: {
+    hash: {
       type: 'string',
-      required: true
+        defaultsTo: ''
     },
     owner: { model: 'User', required: true }
-  }
+  },
+
+   generateHash: function () {
+        var crypto = require('crypto')
+        , shasum = crypto.createHash('sha1');
+          var rnd = crypto.randomBytes(16);
+          shasum.update(rnd);
+          return shasum.digest('hex');
+    },
+     beforeCreate: function (qrCode, cb) {
+          qrCode.hash = this.generateHash();
+        return cb(null, qrCode);
+    }        
 };
