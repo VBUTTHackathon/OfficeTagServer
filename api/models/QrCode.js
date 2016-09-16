@@ -9,10 +9,9 @@ module.exports = {
 
   attributes: {
     value: {
-      type: 'string'
+      type: 'string',
+      required: true
     },
-    ownerId: {
-      type: 'string'
-    }
+    owner: { model: 'User', required: true }
   }
 };
