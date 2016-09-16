@@ -7,7 +7,11 @@
 
 module.exports = {
     generate: function(req,res){
-        res.json({qrcode:"aef123456"});
+        var value = "aef123456";
+        QrCode.create({value:value,ownerId:"wassim"});
+        QrCode.findOne({value:value}).then(function(qr) {
+            res.json(qr.toJSON());
+        });
     }
 };
 
