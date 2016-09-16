@@ -35,7 +35,8 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
-  '/qr/generate': 'QrCodeController.generate'
+  '/qr/generate': 'QrCodeController.generate',
+  '/qr/validate/:hash': 'QrCodeController.validate'
 
 
 

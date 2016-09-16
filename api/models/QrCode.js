@@ -8,7 +8,7 @@
 module.exports = {
 
   attributes: {
-    value: {
+    hash: {
       type: 'string',
       required: true
     },

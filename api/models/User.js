@@ -8,7 +8,14 @@
 module.exports = {
 
   attributes: {
+      //pending: {collection: 'User'},
+      unlocked: {collection: 'User'},
+      //followers: {collection: 'User'},
 
+      unlock: function(userId){
+          this.unlocked.add(userId);
+          this.save();
+      }
   }
 };
 
