@@ -29,20 +29,33 @@ module.exports = {
     validate: function(req,res){
         var hash = req.params.hash;
         QrCode.findOne({hash:hash}).exec(function(err, qrCode) {
-            if(!err){
+            if(!err && qrCode){
                 var followerId = 2;
                 User.findOne(followerId).exec(function(err, follower) {
                     if(!err){
                         follower.unlock(qrCode.owner);
-                        return res.json({message:"User unlocked "+qrCode.owner});
+                        QrCode.destroy(qrCode).exec(function(){
+                            User.findOne(qrCode.owner).exec(function(err, owner) {
+                                if(!err){
+                                    owner.addFollower(followerId);
+                                    return res.json({message:"User unlocked "+owner.name});
+                                 }else{
+                                    console.log(err);
+                                    res.status(404);
+                                    return res.json({error:"Could not find owner User."});
+                                }
+                            });
+                        });
                      }else{
                         console.log(err);
                         res.status(404);
-                        return res.json({error:"Could not find owner User."});
+                        return res.json({error:"Could not find follower User."});
                     }
                 });
             }else{
-                console.log(err);
+                if(err){
+                    console.log(err);
+                }
                 res.status(404);
                 return res.json({error:"Could not find QR Code."});
             }
