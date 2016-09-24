@@ -12,7 +12,7 @@ module.exports = {
             var qr = {owner:user};
             QrCode.create(qr).exec(function(err, qrCode) {
                 if(!err){
-                    return res.json(qr);
+                    return res.json(qrCode);
                 }else{
                     console.log(err);
                     res.status(404);
