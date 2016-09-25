@@ -6,58 +6,72 @@
  */
 
 module.exports = {
-    generate: function(req,res){
-        User.findOne(1).exec(function (err, user){
-          if (!err) {
-            var qr = {owner:user};
-            QrCode.create(qr).exec(function(err, qrCode) {
-                if(!err){
-                    return res.json(qrCode);
-                }else{
-                    console.log(err);
-                    res.status(404);
-                    return res.json({error:"Could not generate QR Code."});
+    generate: function (req, res) {
+        User.findOne(1).then(function (user) {
+            if (user) {
+                return {
+                    owner: user.id
+                };
+            }
+            throw new Error("Could not find session user.");
+        }).then(function (newQrCode) {
+            return QrCode.create(newQrCode).then(function (qrCode) {
+                if (qrCode) {
+                    return qrCode;
                 }
+                throw new Error("Could not generate QR Code.");
             });
-          }else{
-            console.log(err);
+        }).then(function (qrCode) {
+            return res.json(qrCode);
+        }).catch(function (e) {
+            console.log(e);
             res.status(404);
-            return res.json({error:"Could not find user."});
-          }
+            return res.json({error: e.message});
         });
     },
-    validate: function(req,res){
+
+    validate: function (req, res) {
         var hash = req.params.hash;
-        QrCode.findOne({hash:hash}).exec(function(err, qrCode) {
-            if(!err && qrCode){
+        QrCode.findOne({
+            hash: hash
+        }).exec(function (err, qrCode) {
+            if (!err && qrCode) {
                 var followerId = 2;
-                User.findOne(followerId).exec(function(err, follower) {
-                    if(!err){
+                User.findOne(followerId).exec(function (err, follower) {
+                    if (!err) {
                         follower.unlock(qrCode.owner);
-                        QrCode.destroy(qrCode).exec(function(){
-                            User.findOne(qrCode.owner).exec(function(err, owner) {
-                                if(!err){
+                        QrCode.destroy(qrCode).exec(function () {
+                            User.findOne(qrCode.owner).exec(function (err, owner) {
+                                if (!err) {
                                     owner.addFollower(followerId);
-                                    return res.json({message:"User unlocked "+owner.name});
-                                 }else{
+                                    return res.json({
+                                        message: "User unlocked " + owner.name
+                                    });
+                                } else {
                                     console.log(err);
                                     res.status(404);
-                                    return res.json({error:"Could not find owner User."});
+                                    return res.json({
+                                        error: "Could not find owner User."
+                                    });
                                 }
                             });
                         });
-                     }else{
+                    } else {
                         console.log(err);
                         res.status(404);
-                        return res.json({error:"Could not find follower User."});
+                        return res.json({
+                            error: "Could not find follower User."
+                        });
                     }
                 });
-            }else{
-                if(err){
+            } else {
+                if (err) {
                     console.log(err);
                 }
                 res.status(404);
-                return res.json({error:"Could not find QR Code."});
+                return res.json({
+                    error: "Could not find QR Code."
+                });
             }
         });
     }
