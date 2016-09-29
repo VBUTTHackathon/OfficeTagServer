@@ -12,20 +12,22 @@ module.exports = {
       unlocked: {collection: 'User'},
       followers: {collection: 'User'},
 
-      unlock: function(user){
-          User.findOne(user).populate('unlocked').exec(function(err,unlocked){
-              if(!unlocked){
+      unlock: function(unlocked){
+          return User.findOne(unlocked).populate('unlocked').exec(function(err,user){
+              if(!user){
                   this.unlocked.add(user);
-                  this.save();
+                  return this.save();
               }
+              throw new CustomError("You have already unlocked "+unlocked.name);
           });
       },
       addFollower: function(follower){
-          User.findOne(follower).populate('followers').exec(function(err,follower){
-              if(!follower){
-                  this.unlocked.add(user);
-                  this.save();
+          return User.findOne(follower).populate('followers').then(function(user){
+              if(!user){
+                  this.followers.add(user);
+                  return this.save();
               }
+              throw new CustomError("You have already followed "+this.name);
           });
       }
   }
