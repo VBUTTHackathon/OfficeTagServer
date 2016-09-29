@@ -7,29 +7,46 @@
 
 module.exports = {
 
-  attributes: {
-      //pending: {collection: 'User'},
-      unlocked: {collection: 'User'},
-      followers: {collection: 'User'},
+    attributes: {
+        //pending: {collection: 'User'},
+        unlocked: {
+            collection: 'User'
+        },
+        followers: {
+            collection: 'User'
+        },
 
-      unlock: function(unlocked){
-          return User.findOne(unlocked).populate('unlocked').exec(function(err,user){
-              if(!user){
-                  this.unlocked.add(user);
-                  return this.save();
-              }
-              throw new CustomError("You have already unlocked "+unlocked.name);
-          });
-      },
-      addFollower: function(follower){
-          return User.findOne(follower).populate('followers').then(function(user){
-              if(!user){
-                  this.followers.add(user);
-                  return this.save();
-              }
-              throw new CustomError("You have already followed "+this.name);
-          });
-      }
-  }
+        unlock: function (toUnlock) {
+            if(toUnlock.id === this.id){
+                throw new CustomError("You can't tag yourself.");
+            }
+            return User.findOne(this.id)
+                .populate('unlocked', {where: {id: toUnlock.id}})
+                .then(function (user) {
+                    if (user && user.unlocked.length === 0) {
+                        user.unlocked.add(toUnlock);
+                         return user.save().then(function(){
+                            return user;
+                        });
+                    }
+                    throw new CustomError("You have already unlocked " + toUnlock.name,user);
+                });
+        },
+        addFollower: function (follower) {
+            if(follower.id === this.id){
+                throw new CustomError("You can't tag yourself.");
+            }
+            return User.findOne(this.id)
+                .populate('followers', {where: {id: follower.id}})
+                .then(function (user) {
+                    if (user && user.followers.length === 0) {
+                        user.followers.add(follower);
+                        return user.save().then(function(){
+                            return user;
+                        });
+                    }
+                    throw new CustomError("You have already followed " + this.name);
+                });
+        }
+    }
 };
-
