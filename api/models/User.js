@@ -9,6 +9,10 @@ module.exports = {
 
     attributes: {
         //pending: {collection: 'User'},
+        active: {
+            type: 'boolean',
+            defaultsTo: false
+        },
         unlocked: {
             collection: 'User'
         },
