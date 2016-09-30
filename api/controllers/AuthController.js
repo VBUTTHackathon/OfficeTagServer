@@ -25,24 +25,28 @@ module.exports = {
         req.flash('error', info.message);
         return res.redirect('/login');
       }
-      User.findOne({username:ldapUser.uid})
-        .then(function(user){
-          if(!user){
+      User.findOne({
+          username: ldapUser.uid
+        }).then(function (user) {
+          if (!user) {
             return User.create({
-              username:ldapUser.uid,
-              firstName:ldapUser.givenName,
-              lastName:ldapUser.sn
+              username: ldapUser.uid,
+              firstName: ldapUser.givenName,
+              lastName: ldapUser.sn
             });
           }
-      }).then(function(user){
-        req.logIn(user, (err) => {
-              if (err) {return next(err);}
-              req.flash('success', {
-                msg: 'Success! You are logged in.'
-              });
-              res.redirect(req.session.returnTo || '/');
+          return user;
+        }).then(function (user) {
+          req.logIn(user, (err) => {
+            if (err) {
+              return next(err);
+            }
+            req.flash('success', {
+              msg: 'Success! You are logged in.'
             });
-      })
+            res.redirect(req.session.returnTo || '/');
+          });
+        })
     })(req, res, next);
   },
 
