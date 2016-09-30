@@ -36,7 +36,10 @@ module.exports.routes = {
     view: 'homepage'
   },
   '/qr/generate': 'QrCodeController.generate',
-  '/qr/validate/:hash': 'QrCodeController.validate'
+  '/qr/validate/:hash': 'QrCodeController.validate',
+  'get /login': {view: 'login'},
+  'post /login': 'AuthController.login',
+  '/logout': 'AuthController.login'
 
 
 

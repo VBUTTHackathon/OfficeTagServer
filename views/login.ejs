@@ -1,0 +1,13 @@
+ <form action="/login" method="post">
+  Username<br>
+  <input type="text" name="username"><br>
+  Password<br>
+  <input type="password" name="password"><br><br>
+  <input type="submit" value="Submit">
+</form>
+<% if(messages && messages.error) { %>
+<p><%= messages.error %></p>
+<% } %>
+<% if(messages && messages.success) { %>
+<p><%= messages.success %></p>
+<% } %>
