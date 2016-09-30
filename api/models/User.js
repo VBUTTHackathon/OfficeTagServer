@@ -9,6 +9,15 @@ module.exports = {
 
     attributes: {
         //pending: {collection: 'User'},
+        username:{
+          type: 'string'
+        },
+        firstName:{
+          type: 'string'
+        },
+        lastName:{
+          type: 'string'
+        },
         active: {
             type: 'boolean',
             defaultsTo: false
@@ -19,7 +28,11 @@ module.exports = {
         followers: {
             collection: 'User'
         },
-
+        toJSON: function() {
+            var obj = this.toObject();
+            delete obj.password;
+            return obj;
+        },
         unlock: function (toUnlock) {
             if(toUnlock.id === this.id){
                 throw new CustomError("You can't tag yourself.");
