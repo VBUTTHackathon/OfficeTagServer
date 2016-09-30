@@ -28,7 +28,7 @@ module.exports = {
       User.findOne({username:ldapUser.uid})
         .then(function(user){
           if(!user){
-            User.create({
+            return User.create({
               username:ldapUser.uid,
               firstName:ldapUser.givenName,
               lastName:ldapUser.sn
