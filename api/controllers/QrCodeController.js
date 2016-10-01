@@ -71,7 +71,7 @@ module.exports = {
 
     validate: function (req, res) {
         return getQrCode(req.params.hash)
-            //.then(deleteQrCode)
+            .then(deleteQrCode)
             .then(function(qrCode){
                 var owner = qrCode.owner;
                 return getCurrentUser().then(function(user){
