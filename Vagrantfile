@@ -5,7 +5,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty32"
   config.vm.provision :shell, path: "bootstrap.sh", privileged: false
-  config.vm.network :forwarded_port, guest: 3000, host: 3000, auto_correct: true
+  config.vm.network :forwarded_port, guest: 1337, host: 1337, auto_correct: true
   config.vm.synced_folder '.', '/vagrant', nfs: true
 
   config.vm.provider :virtualbox do |vb|
